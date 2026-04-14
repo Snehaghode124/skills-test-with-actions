@@ -79,3 +79,11 @@ def test_get_nth_fibonacci_negative():
    # Act & Assert
    with pytest.raises(ValueError):
       get_nth_fibonacci(n)
+def test_get_nth_fibonacci_one():
+    assert get_nth_fibonacci(1) == 1
+
+def test_get_nth_fibonacci_two():
+    assert get_nth_fibonacci(2) == 1
+
+def test_get_nth_fibonacci_five():
+    assert get_nth_fibonacci(5) == 5
