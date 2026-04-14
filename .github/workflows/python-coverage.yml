@@ -1,0 +1,50 @@
+name: Python Coverage
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+
+jobs:
+  python-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest==8.4.1
+          pip install coverage==7.9
+          pip install pytest-cov==6.2.1
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=src --cov-report=xml --cov-report=term
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+      - name: Coverage comment on PR
+        uses: py-cov-action/python-coverage-comment-action@v3
+        with:
+          GITHUB_TOKEN: ${{ github.token }}
+          MINIMUM_GREEN: 90
+          MINIMUM_ORANGE: 70
+
+      - name: Fail if coverage below threshold
+        run: |
+          coverage report --fail-under=90
